@@ -1,8 +1,26 @@
 <?php
-require_once('./sql_connect.php');
 /*
 Template Name: connexion
 */
+
+$error=false;
+if (!empty($_POST))
+{
+	$user = wp_signon($_POST);
+	if(is_wp_error($user))
+	{
+		$error = $user->get_error_message();
+	}else{
+		header('location:profil');
+	}
+}else{
+	$user = wp_get_current_user();
+	if($user-> ID != 0)
+	{
+		header('location:profil');
+	}
+}
+
 
 get_header();
 
@@ -10,83 +28,24 @@ do_action( 'hestia_before_single_page_wrapper' );
 
 ?>
 <div class="<?php echo hestia_layout(); ?>">
-	<?php
-	$class_to_add = '';
-	if ( class_exists( 'WooCommerce' ) && ! is_cart() ) {
-		$class_to_add = 'blog-post-wrapper';
-	}
-	?>
-	<div class="blog-post <?php esc_attr( $class_to_add ); ?>">
-		<div class="container">
-			<?php
-			if ( have_posts() ) :
-				while ( have_posts() ) :
-					the_post();
-					get_template_part( 'template-parts/content', 'page' );
-				endwhile;
-			else :
-				get_template_part( 'template-parts/content', 'none' );
-            endif;
-
-
-            $Login = ($_POST ["log"]);
-            $mdp = ($_POST ["pwd"]);
-
-            $bbd=openDatabase();
-
-            // Requête SQL sécurisée
-            $result = $bdd->prepare('SELECT LOGIN_ADHERENT, MDP_ADHERENT FROM identite WHERE LOGIN_ADHERENT= :login');
-            $result->bindValue(':login', $Login, PDO::PARAM_STR);
-            $result->execute();
-
-
-            $tab_login = array();
-            $tab_mdp = array();
-            while($data=$result->fetch()) {
-                $tab_login[]=$data['LOGIN_ADHERENT'];
-                $tab_mdp[]=$data['MDP_ADHERENT'];
-            }
-
-            $number=$result->rowCount();
-
-            $Loginbdd=0;
-            $mdpbdd=0;
-
-            for($i=0; $i<$number; $i++) {
-                $Loginbdd=$tab_login[$i];
-                $mdpbdd=$tab_mdp[$i];
-            }
-
-            //vérification des éléments de connexion (formulaire/BDD)
-            if (!$number) {
-                echo '<div id="message"> <br>
-                    <img src="ressources/images/flat.png"/> <br> <br>
-                    Oups, login introuvable, merci de verifier votre login ou de vous inscrire;
-                    </div>';
-                echo '<meta http-equiv="refresh" content= "5; URL=./template-connexion.php">';
-            } else {
-                if (password_verify($mdp, $mdpbdd)) {
-                    session_start();
-                    $_SESSION['Login'] = $Loginbdd;
-                    $_SESSION ['connect']=1;
-                    $_SESSION['MDP'] = $mdpbdd;
-                    echo '<div id="message"> <br>
-                        <img src="ressources/images/hook.png"/> <br> <br>
-                        Vous êtes connecté !
-                        </div>';
-                        echo '<meta http-equiv="refresh" content= "4; URL=http://zumba">';
-                } else {
-                    echo '<div id="message"> <br>
-                        <img src="ressources/images/flat.png"/> <br> <br>
-                        Oups, mauvais identifiant ou mot de passe !
-                        </div>';
-                    echo '<meta http-equiv="refresh" content= "4; URL=template-connexion.php">';
-                }
-            }
-
-            $result->closeCursor();
-
-?>
+<h1> Se connecter </h1>
+<?php if($error):?>
+<div class="error">
+	<?php echo $error; ?>
 </div>
+<?php endif ?>
+	<form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
+		<label for= "user_login"> Votre identifiant </label>
+		<input type="text" name="user_login" id="user_login">
+
+		<label for= "user_password"> Votre mot de passe </label>
+		<input type="text" name="user_password" id="user_password">
+
+		<input type="checkbox" name="remember" id="remember" value="1">
+		<label for="remember"> Se souvenir de moi </label>
+
+		<input type="submit" value="Se connecter">
+	</form>
+
 	</div>
 	<?php get_footer(); ?>

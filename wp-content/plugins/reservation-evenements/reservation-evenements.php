@@ -26,8 +26,8 @@ function reservation_evenements_getform( $postId ) {
 
     $aListeReservation = json_decode(get_post_meta($postId, 'reservations-evenement', true));
 
-    var_dump($aListeReservation);
-    var_dump($sEmail);
+    //var_dump($aListeReservation);
+    //ar_dump($sEmail);
 
     if ($aListeReservation != null) {
         foreach ($aListeReservation as $key => $value) {

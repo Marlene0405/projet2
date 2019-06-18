@@ -28,6 +28,15 @@ $wrap_class     = apply_filters( 'hestia_filter_page_content_classes', 'col-md-8
 				do_action( 'hestia_before_page_content' );
 
 				the_content();
+				/**
+				* Rajout de thumbnail
+				*/
+				$title = get_the_title();
+				if ( has_post_thumbnail() ) { // check if the post has a Post Thumbnail assigned to it.
+					the_post_thumbnail('', array(
+				    'alt' => $title,
+				    'title' => $title));
+				}
 
 				if ( comments_open() || get_comments_number() ) :
 					comments_template();

@@ -28,6 +28,7 @@ if ( Hestia_Public::should_enqueue_masonry() === true ) {
 do_action( 'hestia_before_index_wrapper' ); ?>
 
 <div class="<?php echo hestia_layout(); ?>">
+<?php wp_login_form();?>
 	<div class="hestia-blogs" data-layout="<?php echo esc_attr( $sidebar_layout ); ?>">
 		<div class="container">
 			<?php

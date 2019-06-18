@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: connexion
+Template Name: connexionbis
 */
 
 get_header();

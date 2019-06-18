@@ -51,3 +51,4 @@ if ( (bool) $hide_top_bar === false ) {
 			hestia_after_header_trigger();
 			?>
 		</header>
+

@@ -195,7 +195,7 @@ function evenements_init() {
         'show_in_rest' => true,
         'rewrite' => array('slug' => 'evenements'),
         'query_var' => true,
-        'menu_icon' => 'dashicons-video-alt',
+        'menu_icon' => 'dashicons-star-filled',
         'supports' => array(
             'title',
             'editor',
@@ -226,12 +226,38 @@ function rest_get_date_evenement( $object, $field_name, $request ) {
 }
 add_action( 'rest_api_init', 'rest_add_date_evenement' );
 
-add_action('init', 'preinscription_init');
+add_action('send_headers', 'site_router');
+
+function site_router()
+{
+	$root= str_replace('index.php','', $_SERVER['SCRIPT_NAME']);
+	$url = str_replace($root, '', $_SERVER['REQUEST_URI']);
+	$url= explode('/', $url);
+	if(count($url) == 1 && $url[0] == 'login')
+	{
+		require 'page_connexion.php';
+		die();
+	}
+	if(count($url) == 1 && $url[0] == 'profil')
+	{
+		require 'page_profil.php';
+		die();
+	}
+	if(count($url) == 1 && $url[0] == 'logout')
+	{
+		WP_logout();
+		header('location:' .$root);
+		die();
+	}
+}
+
+//add_filter('show_admin_bar, __return_false');
+//add_action('init', 'preinscription_init');
 
 /**
  *Création du "Custom Post Type" pour les événements
  */
-function preinscription_init(){
+/*function preinscription_init(){
     register_post_type('formulaire', array(
         'public'=> true,
         'labels' => array(
@@ -244,8 +270,9 @@ function preinscription_init(){
         'publicly_queryable' => true,
         'exclude_from_search' => false,
         'menu_position' => 5,
-        'capabililty_type'=>'post',
+		'capabililty_type'=>'post',
+		'menu_icon' => 'dashicons-groups',
         'supports' => array( 'title', 'editor', 'comments', 'trackbacks', 'author', 'excerpt', 'custom-fields', 'thumbnail' ),
         'rewrite' => array( 'slug' => 'mypage', 'with_front' => false ),
     ));
-}
+}*/
